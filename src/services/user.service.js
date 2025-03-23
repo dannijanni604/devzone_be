@@ -34,14 +34,23 @@ export const RegisterUserService = async (userData) => {
 };
 
 export const LoginUserService = async ({ email, password }) => {
-  const user = await Users.findOne({ email });
+  console.log("Searching for user with email:", email);
+
+  // Ensure case-insensitive email search
+  const user = await Users.findOne({
+    email: { $regex: new RegExp("^" + email + "$", "i") },
+  });
 
   if (!user) {
-    throw new Error("Invalid credentials");
+    console.log("No user found for:", email);
+    throw new Error("User not found");
   }
+
+  console.log("User found:", user.email);
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
+    console.log("Password mismatch for:", email);
     throw new Error("Invalid credentials");
   }
 
@@ -60,11 +69,9 @@ export const LoginUserService = async ({ email, password }) => {
     process.env.ACCESS_SECRET_KEY,
     { expiresIn: access_tokenDuration }
   );
-  await user.save();
+
   return {
-    tokens: {
-      access_token: accessToken,
-    },
+    token: accessToken,
     loggedInUser: userInfo,
   };
 };
