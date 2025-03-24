@@ -1,12 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
 import Users from "../models/user.model.js";
 import { CheckValidation } from "../utils/validation.util.js";
-import { passwordResetTemplate } from "../utils/emailTemplates.js";
 
 export const RegisterUserService = async (userData) => {
-  const { name, email, password, image, linkedin, github } = userData;
+  const { name, email, password, team_members, linkedin, github } = userData;
 
   const validationError = CheckValidation(["name", "email", "password"], {
     body: userData,
@@ -23,7 +21,7 @@ export const RegisterUserService = async (userData) => {
     name,
     email,
     password: hashedPassword,
-    image,
+    team_members: [],
     linkedin,
     github,
   });
@@ -35,8 +33,6 @@ export const RegisterUserService = async (userData) => {
 
 export const LoginUserService = async ({ email, password }) => {
   console.log("Searching for user with email:", email);
-
-  // Ensure case-insensitive email search
   const user = await Users.findOne({
     email: { $regex: new RegExp("^" + email + "$", "i") },
   });
@@ -58,7 +54,7 @@ export const LoginUserService = async ({ email, password }) => {
     _id: user._id,
     name: user.name,
     email: user.email,
-    image: user.image,
+    team_members: user.team_members,
     linkedin: user.linkedin,
     github: user.github,
   };
