@@ -8,5 +8,9 @@ const router = express.Router();
 router.post("/task/create", authenticateToken, TaskController.createTasks);
 router.get("/task/all", authenticateToken, TaskController.fetchTasks);
 //
-router.post("/task/submit", authenticateToken, UserTaskController.submitTask);
+router.post(
+  "/task/submit",
+  authenticateToken,
+  UserTaskController.submitTaskAnswer
+);
 export default router;

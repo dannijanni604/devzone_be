@@ -33,6 +33,6 @@ export const getUserTasks = async (userId) => {
 };
 
 export const createTasksService = async (tasks) => {
-  await Task.deleteMany(); // Clear old tasks before inserting new ones
+  await Task.deleteMany(); 
   return await Task.insertMany(tasks);
 };
